@@ -111,3 +111,52 @@ gsap.to('#menu-toggle-open', {
       onLeaveBack: () => document.getElementById('menu-toggle-open').classList.remove('light-section'),
   }
 });
+// Animação de cor para serviços
+// Vamos criar uma timeline diferente
+gsap.timeline({
+  scrollTrigger: {
+    trigger: '.services-section',
+    start: "top bottom", // Começa quando o topo da seção services chegar ao final da viewport
+    end: "top 40%",     // Termina quando o topo estiver a 40% da viewport
+    scrub: true,        // Suaviza a animação
+    onUpdate: (self) => {
+      // Se estiver durante a transição
+      if(self.progress > 0 && self.progress < 1) {
+        gsap.set(".services-title-section", {
+          position: "fixed",
+          top: "50%",
+          transform: "translateY(-50%)"
+        });
+      } else {
+        // Se estiver antes ou depois da transição
+        gsap.set(".services-title-section", {
+          position: "relative",
+          top: "auto",
+          transform: "none"
+        });
+      }
+    }
+  }
+});
+
+// Mantenha a animação de cor separada
+gsap.to('#services-heading, #services-arrow', {
+  scrollTrigger: {
+    trigger: '.services-section',
+    start: "top 70%",
+    end: "top 40%",
+    onEnter: () => {
+      gsap.to("#services-heading, #services-arrow", {
+        color: "#CC5500",
+        duration: 0.3
+      });
+    },
+    onLeaveBack: () => {
+      gsap.to("#services-heading, #services-arrow", {
+        color: "#1E1E1E",
+        duration: 0.3
+      });
+    },
+    toggleActions: "play reverse play reverse"
+  }
+});
