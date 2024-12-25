@@ -3,8 +3,8 @@ gsap.config({
   force3D: true
 });
 
-// Detecta dispositivo mobile
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+// Detecta dispositivo mobile de forma mais precisa
+const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
 
 // Ajusta configurações baseado no dispositivo
 if (isMobile) {
@@ -12,7 +12,7 @@ if (isMobile) {
   gsap.ticker.lagSmoothing(0);
 }
 
-// Menu Code
+// Menu Code (mantido igual)
 const menuOpen = document.getElementById('menu-toggle-open');
 const menuClose = document.getElementById('menu-toggle-close');
 const menu = document.querySelector('.menu');
@@ -38,7 +38,7 @@ function closeMenu(e) {
   overlay.addEventListener(evt, closeMenu, { passive: false });
 });
 
-// Gradient Code
+// Gradient Code (mantido igual)
 const gradientCanvas = document.getElementById('gradient');
 const ctx = gradientCanvas.getContext('2d');
 
@@ -83,9 +83,11 @@ gsap.registerPlugin(ScrollTrigger);
 resizeGradientCanvas();
 requestAnimationFrame(animateGradient);
 
-// Otimize o ScrollTrigger para mobile
+// Configuração do ScrollTrigger
 ScrollTrigger.config({
-  ignoreMobileResize: true
+  ignoreMobileResize: true,
+  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+  limitCallbacks: true
 });
 
 // Animação do texto inicial
@@ -113,18 +115,36 @@ textElements.forEach((element, index) => {
   }, index * (isMobile ? 0.2 : 0.3));
 });
 
-// Animação da transição curva
-gsap.to('.curved-transition', {
-  scrollTrigger: {
-      trigger: '.hero-section',
-      start: "top top",
-      end: isMobile ? "bottom 80%" : "bottom center",
-      scrub: isMobile ? 0.3 : 0.5,
-      markers: false
-  },
-  y: '0%',
-  ease: "none"
-});
+// Nova implementação da curved transition para mobile
+if(isMobile) {
+  const curvedTransition = document.querySelector('.curved-transition');
+  let ticking = false;
+  
+  window.addEventListener('scroll', () => {
+      if (!ticking) {
+          window.requestAnimationFrame(() => {
+              const scrollPercent = window.scrollY / (window.innerHeight * 0.8);
+              const transformValue = Math.max(0, Math.min(100, (100 - (scrollPercent * 100))));
+              curvedTransition.style.transform = `translateY(${transformValue}%)`;
+              ticking = false;
+          });
+          ticking = true;
+      }
+  }, { passive: true });
+} else {
+  // Versão desktop da curved transition
+  gsap.to('.curved-transition', {
+      scrollTrigger: {
+          trigger: '.hero-section',
+          start: "top top",
+          end: "bottom center",
+          scrub: 0.5,
+          markers: false
+      },
+      y: '0%',
+      ease: "none"
+  });
+}
 
 // Fade do hero section
 gsap.to('.hero-section', {
@@ -188,14 +208,19 @@ window.addEventListener('scroll', function() {
   lastScrollPosition = st <= 0 ? 0 : st;
 }, { passive: true });
 
-// Event Listeners com passive true para melhor performance
+// Event Listeners
 window.addEventListener('resize', resizeGradientCanvas, { passive: true });
 
-// Cleanup function para evitar memory leaks
+// Cleanup function
 function cleanup() {
   ScrollTrigger.getAll().forEach(st => st.kill());
   gsap.killTweensOf('*');
 }
 
-// Opcional: Adicionar cleanup quando a página for fechada
+// Cleanup on unload
 window.addEventListener('unload', cleanup);
+
+// Força atualização do ScrollTrigger após carregamento completo
+window.addEventListener('load', () => {
+  ScrollTrigger.refresh();
+}, { passive: true });
