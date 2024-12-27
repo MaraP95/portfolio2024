@@ -101,14 +101,27 @@ function initCurvedTransition() {
 
 // Inicializar a animação da curva
 initCurvedTransition();
+// NOVO: Controle do fixed hero
+ScrollTrigger.create({
+  trigger: ".services-section",
+  start: "top top",
+  end: "bottom bottom",
+  onEnter: () => {
+      document.querySelector('.hero-section').classList.add('scrolled');
+  },
+  onLeaveBack: () => {
+      document.querySelector('.hero-section').classList.remove('scrolled');
+  }
+});
 
 // Reinicializar em resize
 window.addEventListener('resize', initCurvedTransition);
+
   // Alteração de cor do menu no scroll
   gsap.to('#menu-toggle-open', {
       scrollTrigger: {
           trigger: '.services-section',
-          start: "top 70%",
+          start: "top 30%",
           end: "bottom 80px",
           onEnter: () => document.getElementById('menu-toggle-open').classList.add('light-section'),
           onLeave: () => document.getElementById('menu-toggle-open').classList.remove('light-section'),

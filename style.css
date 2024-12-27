@@ -147,32 +147,46 @@ main {
   margin: 0 0.5rem;
 }
 /* Hero Section */
-.hero-section {
-  min-height: 100vh;
-  margin-top: 50px;
+.hero-wrapper {
+  height: 100vh;
+  width: 100%;
   display: flex;
-  flex-direction: column; /* Mudado para column para acomodar o título abaixo */
   align-items: center;
-  justify-content: space-between; /* Distribui o espaço verticalmente */
-  text-align: center;
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
 }
+
+
+.hero-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+/* Quando o scroll passar do services-section */
+.hero-section.scrolled {
+  position: absolute;
+  top: 0;
+}
+
 
 .main-title {
   font-family: var(--title-font);
-  font-size: clamp(3rem, 10vw, 6rem);
+  font-size: clamp(2.5rem, 8vw, 6rem);
   color: #1E1E1E;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   font-weight: 700;
 }
 
-.hero-description{
-  margin-top: 150px;
+.hero-description {
   font-family: var(--body-font);
   text-align: left;
-  font-size: 1.8rem;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  line-height: 1.5;
+  margin-top: 2rem;
 }
 /* Floating Icons */
 .floating-icon {
@@ -211,14 +225,11 @@ main {
   margin-right: 25px; /* Reduzido para mobile */
 }
 .services-section {
-  min-height: 100vh;
-  background: #ceba9c;
   position: relative;
   z-index: 2;
-  margin-top: -50vh; /* Começa a sobrepor a meio da hero section */
-  transform: translateY(50vh); /* Compensa o margin negativo inicialmente */
+  background: #ceba9c;
+  min-height: 100vh;
 }
-
 .curved-divider {
   position: absolute;
   top: 0;
@@ -462,18 +473,24 @@ main {
     font-size: 0.9rem;
   }
 }
-@media screen and (max-width: 768px) {
+
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 1rem;
+    }
+    
+    .floating-icon {
+      margin: 0 1px;
+    }
+  }
   .curved-divider svg {
       height: 100px;
   }
-}
-/* Smartphones médios */
+
+/*Smartphones médios */
 @media (max-width: 480px) {
   .hero-description {
-    margin-top: 60px;
-    font-family: var(--body-font);
-    text-align: left;
-    font-size: 1.5rem;
+    margin-top: 1rem;
   }
 
   .marquee-item {
